@@ -1,3 +1,8 @@
+// client/src/sockets.js
 import { io } from "socket.io-client";
-const SOCKET_BASE = import.meta.env.VITE_API_BASE?.replace(/^http/, "ws") || "ws://localhost:4000";
-export const socket = io(SOCKET_BASE, { transports: ["websocket"] });
+
+const API_URL = import.meta.env.VITE_API_URL;
+if (!API_URL) throw new Error("VITE_API_URL is missing");
+
+const SOCKET_URL = API_URL.replace(/^http/, "ws"); // https -> wss, http -> ws
+export const socket = io(SOCKET_URL, { transports: ["websocket"] });
