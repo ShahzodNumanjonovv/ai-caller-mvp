@@ -11,7 +11,11 @@ import campaignRoute from "./routes/campaign.js";
 import voiceRoute from "./twilio/voice.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ["https://ai-caller-mvp.vercel.app"], // faqat sizning frontend domeningiz
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
