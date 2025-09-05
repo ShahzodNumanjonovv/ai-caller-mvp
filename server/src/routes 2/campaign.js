@@ -1,8 +1,6 @@
 import { Router } from "express";
 import { auth } from "../utils/auth.js";
-// ❌ oldingi: import { startCampaign, stopCampaign, getCampaignState } from "../twilio/dialer.js";
-// ✅ endi sipuni dialer’dan import qilamiz
-import { startCampaign, stopCampaign, getCampaignState } from "../sipuni/dialer.js";
+import { startCampaign, stopCampaign, getCampaignState } from "../twilio/dialer.js";
 
 const r = Router();
 

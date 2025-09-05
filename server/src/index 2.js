@@ -8,16 +8,10 @@ import authRoute from "./routes/auth.js";
 import leadsRoute from "./routes/leads.js";
 import sellersRoute from "./routes/sellers.js";
 import campaignRoute from "./routes/campaign.js";
-import CallLog from "./models/CallLog.js";
-// index.js (src ichida turadi)
-
+import voiceRoute from "./twilio/voice.js";
 
 const app = express();
-app.use(cors({
-  origin: ["https://ai-caller-mvp.vercel.app"], // faqat sizning frontend domeningiz
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,34 +19,7 @@ app.use("/auth", authRoute);
 app.use("/leads", leadsRoute);
 app.use("/sellers", sellersRoute);
 app.use("/campaign", campaignRoute);
-
-
-// --- SIPUNI Webhook ---
-app.post("/sipuni/webhook", async (req, res) => {
-  try {
-    const evt = req.body;
-    console.log("📞 Sipuni webhook:", evt);
-
-    // CallLog saqlash
-    await CallLog.create({
-      callId: evt.call_id || evt.id || evt.sid || `sipuni:${Date.now()}`,
-      event: evt.event || evt.type,
-      from: evt.from,
-      to: evt.to,
-      status: evt.status,
-      raw: evt,
-      ts: new Date(),
-    });
-
-    // Realtime log frontendga yuboramiz
-    ioRef()?.emit("log", { t: Date.now(), msg: `Sipuni event: ${evt.status}` });
-
-    res.send("ok");
-  } catch (err) {
-    console.error("❌ Sipuni webhook error:", err);
-    res.status(500).send("error");
-  }
-});
+app.use("/voice", voiceRoute);
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
